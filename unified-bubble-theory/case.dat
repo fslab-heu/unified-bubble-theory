@@ -1,0 +1,11 @@
+0.0055									! solution time
+0.10000									! dt scale
+0, 0.7, -1.5							! pressure investigation
+.false.									! whether to calculate boundary
+0.000000, 0.000000, 0.000000			! boundary center location
+0.000000, 0.000000, -1.000000			! boundary normal direction
+1.000000								! alpha for boundary
+.true.									! migration
+2										! number of bubbles
+0.0, -93e-3,	0,	-0.1,	0.00263,	120,	1.2e6	! info for bubble 1: delaytime,cx,cy,cz,r0,dr0,p0
+0.0,	  0,    0,  -0.1,   0.00242,    120,    1.2e6	! info for bubble 2: delaytime,cx,cy,cz,r0,dr0,p0
