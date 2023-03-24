@@ -44,6 +44,5 @@ Here we present an example for the 'case.dat':
 #### 3. References
 Users can refer to the following paper for detailed theory and equations:
 
-```
-A.M. Zhang, S.M. Li, S. Li, P. Cui, Y.L. Liu.A unified theory for bubble dynamics. arXiv preprint arXiv:2301.13698, 2023
-```
+
+[A-Man Zhang,  Shi-Min Li,  Pu Cui,  Shuai Li, and  Yun-Long Liu, A unified theory for bubble dynamics. Physics of Fluids, 2023. 35(3): 033323](https://aip.scitation.org/doi/10.1063/5.0145415)
