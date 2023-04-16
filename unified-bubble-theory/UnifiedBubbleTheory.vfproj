@@ -46,16 +46,17 @@
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration></Configurations>
 	<Files>
 		<Filter Name="Header Files" Filter="fi;fd;h;inc"/>
+		<Filter Name="ControlFiles">
+		<File RelativePath=".\case.in"/>
+		<File RelativePath=".\constants.in"/></Filter>
 		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
 		<File RelativePath=".\boundary.f90"/>
 		<File RelativePath=".\bubble_module.f90"/>
-		<File RelativePath=".\case.dat"/>
-		<File RelativePath=".\constants.dat"/>
 		<File RelativePath=".\global.f90"/>
 		<File RelativePath=".\initiation.f90"/>
 		<File RelativePath=".\main.f90"/></Filter>
-		<File RelativePath=".\.gitignore"/>
+		<File RelativePath="..\.gitignore"/>
 		<File RelativePath=".\Makefile"/>
 		<File RelativePath=".\readme.md"/></Files>
 	<Globals/></VisualStudioProject>

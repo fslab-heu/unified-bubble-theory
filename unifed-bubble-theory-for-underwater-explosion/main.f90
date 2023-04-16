@@ -17,7 +17,7 @@
     use shockwave
     ! modules for bubble
     use global,only: t,csound=>c,tend,dtb=>dt,&
-        inc,pressure_loc,iarrive,t_arrive,t_start,t_shock
+        inc,pressure_loc,iarrive,t_arrive,t_start,t_shock,rho,g
     use bubble
     implicit none
     real rp
@@ -25,17 +25,13 @@
     logical iexit
     real pdans(100)
     real dans(100,3),t_offset,pout,drb0,R0,Pg0
+    real state(11)
     character*(100) line
     
     call initialization(rp)
-    open(100,file='./output/pressure.dat')
-    open(101,file='./output/xloc.dat')
-    open(102,file='./output/history.dat')
-    open(103,file='./output/energy.dat')
-    open(104,file='./output/p.dat')
+    open(104,file='./output/pressure.dat')
     open(105,file='./output/bubble.dat')
     write(105,'(3A15)') '#time','radius','migration'
-    write(102,'(8A15)') '#time', 'Rb', 'Rs', 'dRb', 'Modified dRb', 'Pm','Pb','Pr'
     time = 0
     write(104,'(2E15.6)') 0,0
     call output(Rp)
@@ -62,6 +58,7 @@
         time = time+dt
         n = n+1
         call output(Rp)
+        
         if (L>2*Rb)then
             exit
         endif
@@ -115,8 +112,6 @@
     dt= 0.5*dt
     call output_dg(Rp)
 
-    open(108,file='./output/dg.dat')
-    write(108,'(5A15)') '#time', 'Rb', 'R1', 'R2', 'Rs'
     iexit = .false.
     do while(.true.)
         time=time+dt
@@ -182,14 +177,9 @@
             print'(A10,3A13)','increment','time','Rs','Rb'
             print*,'-------------------------------------------------'
         endif
-        if(mod(n,200)==0.and..not.iexit)   write(105,'(3E15.5)') time,Rb,0.0
+        !if(mod(n,200)==0.and..not.iexit)   write(105,'(3E15.5)') time,Rb,0.0
     enddo
     
-    close(100)
-    close(101)
-    close(102)
-    close(103)
-    !stop
     ! start far-field pressure prediction
     print*,'-------------------------------------------------'
     print*,'-------------------------------------------------'
@@ -265,15 +255,19 @@
     do while(t + t_start - t_arrive<tend)
         call collect_dt()
         call bubbles(1)%advance
-        !if(mod(inc,1)==0)&
-        !    call bubbles(1)%print_bubble
         if(mod(inc,20)==0 .and. t + t_start - t_arrive > t_offset .and.&
             t > Rp/csound)then
+            state = collect_induced_field(pressure_loc,t)
             write(104,'(2E15.6)') t + t_start - t_arrive, &
-                collect_induced_field(pressure_loc,t)
+                state(1) - pressure_loc(3)*g*rho
         endif
-        if(mod(inc,500)==0)then
+        if(mod(inc,1000)==0)then
             print'(I10,3E13.3)',inc,t,bubbles(1)%R,bubbles(1)%center(3)
+        endif
+        if(mod(inc,20000)==0)then
+            print*,'-------------------------------------------------'
+            print'(A10,3A13)','increment','time','Rb','Zb'
+            print*,'-------------------------------------------------'
         endif
         if(mod(inc,20)==0)   write(105,'(3E15.5)') t+t_start,bubbles(1)%R,bubbles(1)%center(3)
         inc=inc+1
@@ -281,8 +275,13 @@
     enddo
     close(104)
     close(105)
-    print*,'Simulation Completed!'
-    pause
     
+    
+    print*,''
+    print*,''
+    print*,''
+    print*,'-------------------------------------------------'
+    print*,'Simulation Completed!'
+    print*,'Results can be found in the folder of output.'
     end program undex_ubt
 

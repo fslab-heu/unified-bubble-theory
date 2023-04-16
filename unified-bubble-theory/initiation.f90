@@ -11,7 +11,7 @@
     pi = 2.0*acos(0.0)
     
     ! constants
-    fname = './constants.dat'
+    fname = './constants.in'
     
     open(100,file=fname,status = 'old')
     read(100,*) gamma
@@ -30,7 +30,7 @@
     
     
     ! case parameters
-    fname ='./case.dat'
+    fname ='./case.in'
     open(100,file=fname,status = 'old')
     read(100,*) tend
     read(100,*) sdt

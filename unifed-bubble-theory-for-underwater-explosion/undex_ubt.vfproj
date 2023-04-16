@@ -46,7 +46,7 @@
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration></Configurations>
 	<Files>
 		<Filter Name="Header Files" Filter="fi;fd"/>
-		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+		<Filter Name="ControlFiles">
 		<File RelativePath=".\bubble.in">
 			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/></File>
 		<File RelativePath=".\case.in">
@@ -55,11 +55,12 @@
 			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/></File>
 		<File RelativePath=".\water.in">
 			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/></File></Filter>
+		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
 		<Filter Name="bubble">
-		<File RelativePath=".\boundary.f90"/>
+		<File RelativePath="..\unified-bubble-theory\boundary.f90"/>
 		<File RelativePath=".\bubble_init.f90"/>
-		<File RelativePath=".\bubble_module.f90"/>
+		<File RelativePath="..\unified-bubble-theory\bubble_module.f90"/>
 		<File RelativePath=".\global.f90"/></Filter>
 		<Filter Name="lib">
 		<File RelativePath=".\basis.f90"/>
@@ -81,7 +82,6 @@
 		<File RelativePath=".\shockwave_output.f90"/>
 		<File RelativePath=".\universal_initial_condition.f90"/>
 		<File RelativePath=".\update_dt.f90"/></Filter>
-		<File RelativePath=".\.gitignore"/>
 		<File RelativePath=".\Makefile"/>
 		<File RelativePath=".\ReadMe.md"/></Files>
 	<Globals/></VisualStudioProject>

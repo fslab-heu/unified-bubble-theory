@@ -37,7 +37,7 @@
         ur = 0
     else
         if(.not.touched)then
-            write(102,'(8E15.7)') time, Rb, Rs, dRb, equivalent_vel_dg(), pressure(n+1),pg,p0
+            !write(102,'(8E15.7)') time, Rb, Rs, dRb, equivalent_vel_dg(), pressure(n+1),pg,p0
             touched = .true.
         endif
         cv = 0
@@ -49,9 +49,9 @@
         pr = e2p(cv(3)-0.5*cv(2)**2/cv(1))
     endif
     
-    write(100,trim(fmt)) time,pressure
-    write(101,trim(fmt)) time,x
-    write(102,'(8E15.7)') time, Rb, Rs, dRb, equivalent_vel(), pressure(n+1),pg,Pr
+    !write(100,trim(fmt)) time,pressure
+    !write(101,trim(fmt)) time,x
+    !write(102,'(8E15.7)') time, Rb, Rs, dRb, equivalent_vel(), pressure(n+1),pg,Pr
     end subroutine
     
     
