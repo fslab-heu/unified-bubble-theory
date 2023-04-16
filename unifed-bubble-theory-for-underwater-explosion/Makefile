@@ -1,11 +1,17 @@
 platform := win
-#platform := linux
+platform := linux
 
 fcc := ifort
 FLAGS := -O3  -i4 -fpp  
 
+# basic libs
+sources := linear_equation.f90 \
+	math.f90 \
+	polynomial.f90 \
+	fsintegration.f90
+
 # bubble solver
-sources := global.f90 \
+sources += global.f90 \
     boundary.f90 \
 	bubble_module.f90 \
 	bubble_init.f90
@@ -26,17 +32,10 @@ ifeq ("$(platform)","win")
 	suffix := obj
 	rm := del
     FLAGS += /real-size:64  /NODEFAULTLIB:MSVCRT.lib
-	FLAGS += -I../../libs/fsmath/x64/Release
-	FLAGS += /LIBPATH:"..\..\libs\fsmath\x64\Release"
-	LIBS := ../../libs/fsmath/x64/Release/fsmath.lib
 else
 	suffix := o
 	rm := rm
 	FLAGS += -r8
-	FLAGS += -I../../libs/fsmath/
-	FLAGS += -L../../libs/fsmath/
-	LIBS := -lfsmath
-    
 endif
 
 
