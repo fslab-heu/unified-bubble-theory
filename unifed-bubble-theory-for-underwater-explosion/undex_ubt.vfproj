@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioProject ProjectCreator="Intel Fortran" Keyword="Console Application" Version="11.0" ProjectIdGuid="{0FD896E7-6EA2-4096-8E5C-78E53E8CDBAA}">
+	<Platforms>
+		<Platform Name="Win32"/>
+		<Platform Name="x64"/></Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" WarnInterfaces="true" Traceback="true" BoundsCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemConsole"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Debug|x64">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" WarnInterfaces="true" RealKIND="realKIND8" FloatingPointExceptionHandling="fpe0" Traceback="true" BoundsCheck="true" UninitializedVariablesCheck="true" StackFrameCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemConsole"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Release|Win32">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" SubSystem="subSystemConsole"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Release|x64">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" Optimization="optimizeFull" AdditionalIncludeDirectories="..\..\libs\fsmath\x64\Release" OpenMP="OpenMPParallelCode" RealKIND="realKIND8" FloatingPointExceptionHandling="fpe0" RuntimeChecks="rtChecksNone" BoundsCheck="true" UninitializedVariablesCheck="true" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories="..\..\libs\fsmath\x64\Release" SubSystem="subSystemConsole" AdditionalDependencies="fsmath.lib"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration></Configurations>
+	<Files>
+		<Filter Name="Header Files" Filter="fi;fd"/>
+		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+		<File RelativePath=".\bubble.in">
+			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/></File>
+		<File RelativePath=".\case.in">
+			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/></File>
+		<File RelativePath=".\jwl.in">
+			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/></File>
+		<File RelativePath=".\water.in">
+			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/></File></Filter>
+		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
+		<Filter Name="bubble">
+		<File RelativePath=".\boundary.f90"/>
+		<File RelativePath=".\bubble_init.f90"/>
+		<File RelativePath=".\bubble_module.f90"/>
+		<File RelativePath=".\global.f90"/></Filter>
+		<Filter Name="lib">
+		<File RelativePath=".\basis.f90"/>
+		<File RelativePath=".\fsintegration.f90"/>
+		<File RelativePath=".\linear_equation.f90"/>
+		<File RelativePath=".\math.f90"/>
+		<File RelativePath=".\polynomial.f90"/></Filter>
+		<File RelativePath=".\entropy.f90"/>
+		<File RelativePath=".\far_field_march.f90"/>
+		<File RelativePath=".\far_field_output.f90"/>
+		<File RelativePath=".\ini_pressure.f90"/>
+		<File RelativePath=".\initialization.f90"/>
+		<File RelativePath=".\main.f90"/>
+		<File RelativePath=".\restart.f90"/>
+		<File RelativePath=".\shock_wave_module.f90"/>
+		<File RelativePath=".\shockwave_DG.f90"/>
+		<File RelativePath=".\shockwave_DG_output.f90"/>
+		<File RelativePath=".\shockwave_march.f90"/>
+		<File RelativePath=".\shockwave_output.f90"/>
+		<File RelativePath=".\universal_initial_condition.f90"/>
+		<File RelativePath=".\update_dt.f90"/></Filter>
+		<File RelativePath=".\.gitignore"/>
+		<File RelativePath=".\Makefile"/>
+		<File RelativePath=".\ReadMe.md"/></Files>
+	<Globals/></VisualStudioProject>
