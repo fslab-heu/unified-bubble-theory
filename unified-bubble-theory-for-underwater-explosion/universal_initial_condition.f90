@@ -48,7 +48,7 @@
     integer i!,id_dg
     logical lfin
     !real, external:: energy_k
-    xend = 0.65
+    xend = 0.9
     xend = xend*L
     ek = 0
     

@@ -1,0 +1,5 @@
+0.00125			! charge weight
+1.4			! charge depth
+0.7,0,0		! coordinate of pressure point with respect to charge center
+0.03			! solution time
+0.1		! dt scale, default value: 1.0

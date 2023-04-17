@@ -105,7 +105,7 @@
     gamma_b = w+1
     csound = c0
     imigration = .true.
-    ibound = .true.
+    ibound = .false.
     nbubble = 1
     call bound1%ini_bound([0.0,0.0,1.0],[0.0,0.0,hdepth],alpha)
     

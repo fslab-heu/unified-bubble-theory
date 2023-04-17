@@ -17,7 +17,7 @@
     use shockwave
     ! modules for bubble
     use global,only: t,csound=>c,tend,dtb=>dt,&
-        inc,pressure_loc,iarrive,t_arrive,t_start,t_shock,rho,g
+        inc,pressure_loc,iarrive,t_arrive,t_start,t_shock,pamb
     use bubble
     implicit none
     real rp
@@ -259,7 +259,7 @@
             t > Rp/csound)then
             state = collect_induced_field(pressure_loc,t)
             write(104,'(2E15.6)') t + t_start - t_arrive, &
-                state(1) - pressure_loc(3)*g*rho
+                state(1) - pamb
         endif
         if(mod(inc,1000)==0)then
             print'(I10,3E13.3)',inc,t,bubbles(1)%R,bubbles(1)%center(3)
