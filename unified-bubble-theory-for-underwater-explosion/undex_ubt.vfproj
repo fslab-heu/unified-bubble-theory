@@ -36,7 +36,7 @@
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
 		<Configuration Name="Release|x64">
 				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" Optimization="optimizeFull" AdditionalIncludeDirectories="..\..\libs\fsmath\x64\Release" OpenMP="OpenMPParallelCode" RealKIND="realKIND8" FloatingPointExceptionHandling="fpe0" RuntimeChecks="rtChecksNone" BoundsCheck="true" UninitializedVariablesCheck="true" RuntimeLibrary="rtMultiThreadedDLL"/>
-				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories="..\..\libs\fsmath\x64\Release" SubSystem="subSystemConsole" AdditionalDependencies="fsmath.lib"/>
+				<Tool Name="VFLinkerTool" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories="..\..\libs\fsmath\x64\Release" SubSystem="subSystemConsole"/>
 				<Tool Name="VFResourceCompilerTool"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
 				<Tool Name="VFCustomBuildTool"/>
@@ -45,7 +45,6 @@
 				<Tool Name="VFPostBuildEventTool"/>
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration></Configurations>
 	<Files>
-		<Filter Name="Header Files" Filter="fi;fd"/>
 		<Filter Name="ControlFiles">
 		<File RelativePath=".\bubble.in">
 			<FileConfiguration Name="Release|x64" ExcludedFromBuild="true"/></File>
@@ -58,9 +57,9 @@
 		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
 		<Filter Name="bubble">
-		<File RelativePath="..\unified-bubble-theory\boundary.f90"/>
+		<File RelativePath=".\boundary.f90"/>
 		<File RelativePath=".\bubble_init.f90"/>
-		<File RelativePath="..\unified-bubble-theory\bubble_module.f90"/>
+		<File RelativePath=".\bubble_module.f90"/>
 		<File RelativePath=".\global.f90"/></Filter>
 		<Filter Name="lib">
 		<File RelativePath=".\basis.f90"/>

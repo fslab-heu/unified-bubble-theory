@@ -259,7 +259,7 @@
             t > Rp/csound)then
             state = collect_induced_field(pressure_loc,t)
             write(104,'(2E15.6)') t + t_start - t_arrive, &
-                state(1) - pamb
+                state(1) 
         endif
         if(mod(inc,1000)==0)then
             print'(I10,3E13.3)',inc,t,bubbles(1)%R,bubbles(1)%center(3)

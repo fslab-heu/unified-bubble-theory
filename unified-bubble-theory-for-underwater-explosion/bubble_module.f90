@@ -168,7 +168,7 @@
     real grad_dphi(3), duamb(3)
     real output(11)
     
-    output(1) = pamb - rho*g*pos(3) ! pressure
+    output(1) = 0! pamb - rho*g*pos(3) ! pressure
     output(2) = 0                   ! dp
     output(3:5) = uamb              ! uamb
     output(6:8) = [0.0,0.0,-rho*g]  ! nabla p
