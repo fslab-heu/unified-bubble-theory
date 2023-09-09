@@ -15,7 +15,9 @@
     contains
     procedure gl_init_legendre
     end type
-         
+    
+    type(gauss_legendre) gl0
+    
     contains
     
     subroutine gl_init(this,npoints)

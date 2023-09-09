@@ -4,7 +4,7 @@
     implicit none
     integer i,j,k,npwave
     
-    npwave = 18
+    npwave = 16
     
     Lp = 0.5*Rs
     Re = Rs - Lp

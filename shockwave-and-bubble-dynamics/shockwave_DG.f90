@@ -183,7 +183,8 @@
         s_nb = i
         do j=1,3
             s_nb2 = j
-            rhs(i,j) = adaptive_integrate_gl(0.0,1.0,int_rhs_dg,np=5)
+            !rhs(i,j) = adaptive_integrate_gl(0.0,1.0,int_rhs_dg,np=5)
+            rhs(i,j) = quadrature_legendre(0.0,1.0,int_rhs_dg,np=5)
         enddo
     enddo
     ! flux

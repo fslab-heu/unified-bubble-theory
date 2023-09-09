@@ -37,7 +37,7 @@
     
     pi = asin(1.0)*2.0
     
-    
+    call gl0%gl_init_legendre(5)
     
     ! read jwl info
     open(100,file='jwl.in')

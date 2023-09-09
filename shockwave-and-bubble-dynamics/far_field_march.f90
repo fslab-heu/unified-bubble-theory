@@ -73,7 +73,8 @@
     prhs = 0
     do i=1,np
         s_nb = i
-        prhs(i) = adaptive_integrate_gl(0.0,1.0,int_rhs_far,np=5)
+        prhs(i) = adaptive_integrate_gl(0.0,1.0,int_rhs_far,ecr=1e-6,np=5)
+        !prhs(i) = quadrature_legendre(0.0,1.0,int_rhs_far,np=5)
     enddo
 
     ! boundary conditions

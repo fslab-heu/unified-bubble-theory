@@ -7,7 +7,6 @@
 *.dat
 *.fig
 fort*
-*.exe
 
 # User-specific files
 *.rsuser
