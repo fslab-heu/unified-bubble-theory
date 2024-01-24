@@ -8,3 +8,5 @@ The input parameters are read from 3 input files, i.e. 'bubble.in', 'jwl.in' and
 Please see the example input files for instruction.
 
 ### 3. Output
+You can find simulation results in the `output` folder. The `bubble.dat` holds the radius and migration histories of the bubble.
+The `pressure.dat` holds the pressure history at the measuring point.

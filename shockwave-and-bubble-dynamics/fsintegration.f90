@@ -66,7 +66,7 @@
     endif
     
     
-    dx =(xend - xstart)/5;
+    dx =(xend - xstart)/10;
     
     x = xstart + dx*&
         [0.0,0.25,0.5,0.75,1.0]

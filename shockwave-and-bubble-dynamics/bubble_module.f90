@@ -96,10 +96,6 @@
     
     this%bhis(1,4) = this%ddr
     
-    ! open file for output
-    write(name,*) id
-    open(this%fid,file=trim(path)//'/bubble_'//trim(adjustl(name))//'.dat')
-    write(this%fid,"(10A15)")'#time','R','pressure','-rho*dphi*R','ux','uy','uz','vx','vy','vz'
     return
     end subroutine
     
