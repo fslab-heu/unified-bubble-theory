@@ -16,7 +16,7 @@
     do i = 1,npwave
         s_nb = i
         prhs(i) = adaptive_integrate_gl(0.0,1.0,pressure_L2,&
-            debug = .false.,np = 5)
+            debug = .false.,np = 5, ecr = 1e-9*pg)
     enddo
     np = npwave
     call inv_lie(mmatrix(1:np,1:np),imatrix(1:np,1:np),0)
