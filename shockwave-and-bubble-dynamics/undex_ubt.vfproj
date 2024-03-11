@@ -72,7 +72,8 @@
 		<File RelativePath=".\fsintegration.f90"/>
 		<File RelativePath=".\linear_equation.f90"/>
 		<File RelativePath=".\math.f90"/>
-		<File RelativePath=".\polynomial.f90"/></Filter>
+		<File RelativePath=".\polynomial.f90"/>
+		<File RelativePath=".\pp_limiter.f90"/></Filter>
 		<File RelativePath=".\entropy.f90"/>
 		<File RelativePath=".\far_field_march.f90"/>
 		<File RelativePath=".\far_field_output.f90"/>

@@ -122,6 +122,7 @@
         Rs1=Rs
         Rdg1=Rdg
         ! flux
+        call pp_limiter()
         call calculate_flux()
         
         

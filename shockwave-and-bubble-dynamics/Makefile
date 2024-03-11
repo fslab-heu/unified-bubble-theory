@@ -21,7 +21,6 @@ sources += shock_wave_module.f90 \
     restart.f90 \
     shockwave_DG_output.f90 \
     shockwave_output.f90 \
-    update_dt.f90 \
 	main.f90
     
     

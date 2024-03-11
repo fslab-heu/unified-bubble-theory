@@ -19,8 +19,14 @@
     function soundspeed(pressure,rho) result (c)
     implicit none
     real rho,  pressure,c
+    real root
+    root = (pressure+pw)/rho*gamma
+    if(root<=0)then
+        c=-1
+    else
+        c = sqrt(root)
+    endif
     
-    c = sqrt((pressure+pw)/rho*gamma)
 
     return
     end function
