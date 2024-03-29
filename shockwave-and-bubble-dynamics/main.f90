@@ -35,8 +35,11 @@
     time = 0
     write(104,'(2E15.6)') 0,0
     call output(Rp)
-    !dt = 1e-5
     n = 0
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !             first step, 1 DG cell, high order
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
     print*,'-------------------------------------------------'
     print*,'Start near-field solver!'
     iarrive = .false.
@@ -66,35 +69,27 @@
         if(L>1.2*Rb.and.np==8)then
             np = 9
             call inv_lie(mmatrix(1:np,1:np),imatrix(1:np,1:np),0)
-            !print*,'Rb',np
             call inv_lie(mmatrix(1:np,1:np),imatrix(1:np,1:np),0)
         elseif(L>0.8*Rb.and.np==7)then
             np = 8
-            !print*,'Rb',np
             call inv_lie(mmatrix(1:np,1:np),imatrix(1:np,1:np),0)
         elseif(L>0.5*Rb.and.np==6)then
             np = 7
-            !print*,'Rb',np
             call inv_lie(mmatrix(1:np,1:np),imatrix(1:np,1:np),0)
         elseif(L>0.3*Rb.and.np==5)then
             np = 6
-            !print*,'Rb',np
             call inv_lie(mmatrix(1:np,1:np),imatrix(1:np,1:np),0)
         elseif(L>0.2*Rb.and.np==4)then
             np = 5
-            !print*,'Rb',np
             call inv_lie(mmatrix(1:np,1:np),imatrix(1:np,1:np),0)
         elseif(L>0.1*Rb.and.np==3)then
             np = 4
-            !print*,'Rb',np
             call inv_lie(mmatrix(1:np,1:np),imatrix(1:np,1:np),0)
         elseif(L>0.05*Rb.and.np==2)then
             np = 3
-            !print*,'Rb',np
             call inv_lie(mmatrix(1:np,1:np),imatrix(1:np,1:np),0)
         elseif(L>0.02*Rb.and.np==1)then
             np = 2
-            !print*,'Rb',np
             call inv_lie(mmatrix(1:np,1:np),imatrix(1:np,1:np),0)
         endif
         ! update dt
@@ -107,7 +102,9 @@
         endif
         if(dt<0)stop
     enddo
-    ! start DG simulation
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !             second step, 20 DG cell, low order
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     call DG_init()
     dt= 0.5*dt
     call output_dg(Rp)
@@ -157,7 +154,6 @@
         endif
         
         if(mod(n,10)==0)then
-            !print'(4E10.3,I3)',time,dt,Rb,Rs,np
             call output_dg(Rp)
         endif
         if(Rs>6*Rb.and..not.iexit)then
@@ -178,17 +174,17 @@
             print'(A10,3A13)','increment','time','Rs','Rb'
             print*,'-------------------------------------------------'
         endif
-        !if(mod(n,200)==0.and..not.iexit)   write(105,'(3E15.5)') time,Rb,0.0
     enddo
     
-    ! start far-field pressure prediction
+
     print*,'-------------------------------------------------'
     print*,'-------------------------------------------------'
     print*,'Finished near-field solver!'
     print*,'-------------------------------------------------'
-    ! record the time of the end of the nearfield solver
     
-    
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !             third step, farfield shock wave
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     print*,'-------------------------------------------------'
     print*,'Start the solution of far-field solver!'
@@ -242,6 +238,13 @@
     print*,'Finished far-field solver!'
     print*,'-------------------------------------------------'
 
+    
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !             4th step, bubble solving
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    
+    
     print*,'-------------------------------------------------'
     print*,'Start unified bubble dynamics solver!'
     print*,'-------------------------------------------------'

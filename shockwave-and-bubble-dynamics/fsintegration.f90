@@ -255,6 +255,10 @@
     ! input
     integer, intent(in):: npoints
     this%npoints=npoints
+    if(allocated(this%pos))then
+        deallocate(this%pos,this%weight)
+    endif
+    
     allocate(this%pos(npoints),this%weight(npoints))
     if(npoints==3)then
         this%pos = [-sqrt(3.0/5.0),sqrt(3.0/5.0),0.0]
