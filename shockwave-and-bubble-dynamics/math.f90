@@ -207,7 +207,7 @@
         enddo
       end function rotate_vect2
       subroutine reflect(in,out,plane)
-!DEC$ ATTRIBUTES DLLEXPORT :: reflect
+!!DEC$ ATTRIBUTES DLLEXPORT :: reflect
         integer i,j,k,N
         real plane(2,3)
         real in(:,:),out(:,:)
@@ -222,7 +222,7 @@
       end subroutine reflect
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       subroutine dis2plane(in,dis,plane)
-!DEC$ ATTRIBUTES DLLEXPORT :: dis2plane
+!!DEC$ ATTRIBUTES DLLEXPORT :: dis2plane
         integer i,j,N
         real dis(:),in(:,:),plane(2,3)
         N=size(in(:,1))
@@ -258,7 +258,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!! 微分
       function diff(x)
-!DEC$ ATTRIBUTES DLLEXPORT :: diff
+!!DEC$ ATTRIBUTES DLLEXPORT :: diff
           implicit none
           real x(:)
           integer N
@@ -269,7 +269,7 @@
       end function diff     
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!c叉乘
         function cross(a,b)
-!DEC$ ATTRIBUTES DLLEXPORT :: cross
+!!DEC$ ATTRIBUTES DLLEXPORT :: cross
             implicit none
             real a(3),b(3),cross(3)
             cross(1)=a(2)*b(3)-b(2)*a(3)
@@ -305,7 +305,7 @@
           end function length
           
           function coor_tranf(vect0,coor_sys)
-!DEC$ ATTRIBUTES DLLEXPORT :: coor_tranf    
+!!DEC$ ATTRIBUTES DLLEXPORT :: coor_tranf    
           !!coor_sys 三行分别为 原点坐标 z轴方向 x轴方向
             use linear_equation,only: lie
             implicit none
@@ -328,7 +328,7 @@
           end function coor_tranf
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!cc
           function coor_tranf_inv(vect0,coor_sys)
-!DEC$ ATTRIBUTES DLLEXPORT :: coor_tranf_inv    
+!!DEC$ ATTRIBUTES DLLEXPORT :: coor_tranf_inv    
           !!coor_sys 三行分别为 原点坐标 z轴方向 x轴方向
             use linear_equation
             implicit none
@@ -349,7 +349,7 @@
             return
           end function coor_tranf_inv
 !          subroutine coor_trans(vect_out,vect_in,coor_sys)
-!!DEC$ ATTRIBUTES DLLEXPORT :: coor_trans
+!!!DEC$ ATTRIBUTES DLLEXPORT :: coor_trans
 !          !!coor_sys 三行分别为 原点坐标 z轴方向 x轴方向
 !            use linear_equation
 !            implicit none
@@ -374,7 +374,7 @@
 !          end subroutine coor_trans
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!cc
           subroutine coor_trans_inv(vect_out,vect_in,coor_sys)
-!DEC$ ATTRIBUTES DLLEXPORT :: coor_trans_inv
+!!DEC$ ATTRIBUTES DLLEXPORT :: coor_trans_inv
           !!coor_sys 三行分别为 原点坐标 z轴方向 x轴方向
             use linear_equation
             implicit none
@@ -398,7 +398,7 @@
           end subroutine coor_trans_inv
 
           function interp1(x,y,x0,interp_type)
-!DEC$ ATTRIBUTES DLLEXPORT :: interp_dp 
+!!DEC$ ATTRIBUTES DLLEXPORT :: interp_dp 
             real x(:),y(:),x0
             integer N,NN,i,j,k,itype,L,M
             character(*) interp_type
@@ -437,7 +437,7 @@
 
 
 	  function Newton(Func,x0)
-!DEC$ ATTRIBUTES DLLEXPORT :: Newton 
+!!DEC$ ATTRIBUTES DLLEXPORT :: Newton 
 			real Newton,x,err,x0,y,dy,dx
 			real, External:: Func
 			integer count
@@ -459,7 +459,7 @@
         
 
         subroutine sort(A,ind,asc)
-!DEC$ ATTRIBUTES DLLEXPORT :: sort         
+!!DEC$ ATTRIBUTES DLLEXPORT :: sort         
 !!!!!!!!!!!!!!! 冒泡法
             real A(:)
             integer ind(:)
@@ -506,7 +506,7 @@
             
         end subroutine sort
         subroutine sort_int(A,ind,asc)
-!DEC$ ATTRIBUTES DLLEXPORT :: sort_int     
+!!DEC$ ATTRIBUTES DLLEXPORT :: sort_int     
 !!!!!!!!!!!!!!! 冒泡法
             integer A(:)
             integer ind(:)
@@ -553,7 +553,7 @@
         end subroutine sort_int
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!	  
       subroutine car2cyl(pin,pout)
-!DEC$ ATTRIBUTES DLLEXPORT :: car2cyl    
+!!DEC$ ATTRIBUTES DLLEXPORT :: car2cyl    
         real pin(:,:),pout(:,:)
         integer N,i,j
         real R
@@ -572,7 +572,7 @@
         return
       end subroutine car2cyl
       subroutine cyl2car(pin,pout)
-!DEC$ ATTRIBUTES DLLEXPORT :: cyl2car    
+!!DEC$ ATTRIBUTES DLLEXPORT :: cyl2car    
         real pin(:,:),pout(:,:)
         integer N,i,j
         real R,xita
@@ -588,7 +588,7 @@
       end subroutine cyl2car
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !      subroutine rotate(in,out,axis,ang)
-!!DEC$ ATTRIBUTES DLLEXPORT :: rotate   
+!!!DEC$ ATTRIBUTES DLLEXPORT :: rotate   
 !        real in(:,:),out(:,:),axis(2,3),ang
 !        integer N,i,j
 !        real trans(3,3),v1(3),v2(3)

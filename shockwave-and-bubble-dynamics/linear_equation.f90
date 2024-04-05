@@ -65,7 +65,7 @@
 	end subroutine inv_lie
     
 	subroutine lie(A,X,B)
-!DEC$ ATTRIBUTES DLLEXPORT :: lie
+!!DEC$ ATTRIBUTES DLLEXPORT :: lie
 !---------------------列主元消去法
 	integer i,j,k,N,m
 	real A(:,:),X(:),B(:),det,max

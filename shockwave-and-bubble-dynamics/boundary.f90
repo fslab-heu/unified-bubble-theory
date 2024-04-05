@@ -1,4 +1,5 @@
     ! module to hold the boundary information
+    ! in this code, it refers to the freesurface
     module boundary
     private :: length
     type bound
