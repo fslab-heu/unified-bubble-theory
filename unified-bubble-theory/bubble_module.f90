@@ -37,9 +37,9 @@
     this%h = enthalpy(this,this%r)
     this%dh = denthalpy(this,this%r,this%dr)
     
-    this%bhis(inc+1,1:7) = [t+dt,&
+    this%bhis(inc+1,1:10) = [t+dt,&
     this%r,this%dr,this%ddr,&
-    this%p,this%h,this%dh]
+    this%p,this%h,this%dh,this%vel(1),this%vel(2),this%vel(3)]
     
     end subroutine
     
@@ -67,7 +67,7 @@
     this%id=id
     this%fid=id+100
     this%started=.false.
-    allocate(this%bhis(1000000,8))
+    allocate(this%bhis(1000000,10))
     this%bhis=0
     
     allocate(this%impacted(nbubble,2))
@@ -217,7 +217,7 @@
     integer i,m,n,stg
     real wm,wn,tinc
     real r, dr, h, ddr,dh
-    real dvel(3),grad_dphi(3),dir(3)
+    real dvel(3),grad_dphi(3),dir(3),vmig,dvmig
     logical,optional:: impacted(:)
     
     if(stg==1)then
@@ -261,15 +261,17 @@
     r = wm*this%bhis(m,2)+wn*this%bhis(n,2)
     dr = wm*this%bhis(m,3)+wn*this%bhis(n,3)
     ddr = wm*this%bhis(m,4)+wn*this%bhis(n,4)
-    
+    vmig = wm*length(this%bhis(m,8:10))+wn*length(this%bhis(n,8:10))
+    dvmig = (length(this%bhis(n,8:10)) - length(this%bhis(m,8:10)))/&
+        (this%bhis(n,1)-this%bhis(m,1))
     ! h and dh must be intepolated from existing data
     ! since the ambient pressure are not stored for history
     h = wm*this%bhis(m,6)+wn*this%bhis(n,6)
     dh = wm*this%bhis(m,7)+wn*this%bhis(n,7)
 
     vel = dir*r/dis**2*(r*dr+(dis-r)/c*(h+0.5*dr**2))
-    dphi = -r/dis*(h+0.5*dr**2.0)
-    ddphi = -(dr*(h+0.5*dr**2.0) + r*(dh+dr*ddr))/dis
+    dphi = -r/dis*(h+0.5*dr**2.0+0.25*vmig**2)
+    ddphi = -(dr*(h+0.5*dr**2.0) + r*(dh+dr*ddr+0.5*vmig*dvmig))/dis
     ! calculate grad_dphi
     grad_dphi = -dphi*dir/dis - &
         dir*ddphi/c
