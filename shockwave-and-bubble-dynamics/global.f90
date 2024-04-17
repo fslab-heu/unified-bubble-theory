@@ -5,6 +5,7 @@
     real miu, sigma
     real pi
     real dt,t,tend,sdt
+    real tdelay
     
     real pamb,uamb(3)
     

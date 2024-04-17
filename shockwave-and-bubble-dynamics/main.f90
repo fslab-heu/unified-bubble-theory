@@ -17,11 +17,11 @@
     use shockwave
     ! modules for bubble
     use global,only: t,csound=>c,tend,dtb=>dt,&
-        inc,pressure_loc,iarrive,t_arrive,t_start,t_shock,pamb
+        inc,pressure_loc,iarrive,t_arrive,t_start,t_shock,pamb,tdelay
     use bubble
     implicit none
     real rp
-    integer n
+    integer n,n_arrive
     logical iexit
     real pdans(100)
     real dans(100,3),t_offset,pout,drb0,R0,Pg0
@@ -110,6 +110,7 @@
     call output_dg(Rp)
 
     iexit = .false.
+    n_arrive = 0
     do while(.true.)
         time=time+dt
         
@@ -151,9 +152,10 @@
         if(Rs>Rp.and.(.not.iarrive))then
             iarrive  = .true.
             t_arrive = time
+            n_arrive = n
         endif
         
-        if(mod(n,10)==0)then
+        if(mod(n - n_arrive,10)==0)then
             call output_dg(Rp)
         endif
         if(Rs>6*Rb.and..not.iexit)then
@@ -262,7 +264,7 @@
         if(mod(inc,20)==0 .and. t + t_start - t_arrive > t_offset .and.&
             t > Rp/csound)then
             state = collect_induced_field(pressure_loc,t)
-            write(104,'(2E15.6)') t + t_start - t_arrive, &
+            write(104,'(2E15.6)') t + t_start - t_arrive + tdelay, &
                 state(1) 
         endif
         if(mod(inc,1000)==0)then

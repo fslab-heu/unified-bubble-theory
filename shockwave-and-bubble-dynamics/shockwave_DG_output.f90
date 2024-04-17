@@ -1,7 +1,7 @@
     subroutine output_DG(Rp)
     use shockwave
     !use math
-    use global,only: iarrive,t_arrive
+    use global,only: iarrive,t_arrive,tdelay
     implicit none
     integer n,i,j
     real dx,s,rho,ein,mom
@@ -64,6 +64,6 @@
         pr = e2p(cv(3)-0.5*cv(2)**2/cv(1))
     endif
     if(iarrive)then
-        write(104,'(2E15.6)') time-t_arrive,pr - p0
+        write(104,'(2E15.6)') time-t_arrive+tdelay,pr - p0
     endif
     end subroutine

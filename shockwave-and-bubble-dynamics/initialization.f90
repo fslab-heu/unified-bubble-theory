@@ -6,7 +6,7 @@
     use global,only: gamma_b=>gamma,&
         rho_w=>rho,&
         csound=>c,&
-        miu,sigma,tend,sdt,pressure_loc,pv,g,cd,ca,imigration,ibound,pamb,uamb
+        miu,sigma,tend,sdt,pressure_loc,pv,g,cd,ca,imigration,ibound,pamb,uamb,tdelay
     use boundary
     use bubble,only:nbubble
     implicit none
@@ -82,6 +82,7 @@
     read(100,*) pressure_loc
     read(100,*) tend
     read(100,*) sdt
+    read(100,*) tdelay
     close(100)
     
     print*,''

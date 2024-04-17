@@ -1,5 +1,6 @@
-8			! charge weight
-1000			! charge depth
-30,0,100		! coordinate of pressure point with respect to charge center
-0.2			! solution time
-1		! dt scale, default value: 1.0
+100           ! charge weight
+50           ! charge depth
+10,0,0           ! coordinate of pressure point with respect to charge center
+1           ! solution time
+1.0           ! dt scale, default value: 1.0
+1e-6		! time delay
