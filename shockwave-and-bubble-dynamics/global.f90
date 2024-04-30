@@ -13,6 +13,7 @@
     !integer order
     integer inc
     character*1000 path
+    character*300 fpath ! file path
     
     real t_arrive   ! when the shock wave arrive at the pressure points
     real t_offset   ! time offset for bubble pressure

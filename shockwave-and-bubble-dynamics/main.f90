@@ -17,7 +17,8 @@
     use shockwave
     ! modules for bubble
     use global,only: t,csound=>c,tend,dtb=>dt,&
-        inc,pressure_loc,iarrive,t_arrive,t_start,t_shock,pamb,tdelay
+        inc,pressure_loc,iarrive,t_arrive,t_start,&
+        t_shock,pamb,tdelay,fpath
     use bubble
     implicit none
     real rp
@@ -29,8 +30,8 @@
     character*(100) line
     
     call initialization(rp)
-    open(104,file='./output/pressure.dat')
-    open(105,file='./output/bubble.dat')
+    open(104,file=trim(fpath)//'output/pressure.dat')
+    open(105,file=trim(fpath)//'output/bubble.dat')
     write(105,'(3A15)') '#time','radius','migration'
     time = 0
     write(104,'(2E15.6)') 0,0

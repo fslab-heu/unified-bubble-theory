@@ -52,6 +52,12 @@ Here is an example for the water often used in papers, and the corresponding sou
 Note that the boundary included in this code is only the free surface which is often used in UNDEX simulation.
 The reflection coefficient should be ranging from -1 to 0. Typically, -1 is a good choice.
 
+An optional argument can be passed in when runing the excutable in the command line terminal. 
+The argument should be the working directory enclosed by double quote and ended by `/`. For example:
+```
+undex_ubt.exe "C:/user/Administrator/fsundex/"
+```
+will lead the code to read ini files from the given directory and put the results there too.
 ### 3. Output
 You can find simulation results in the `output` folder. The `bubble.dat` holds the radius and migration histories of the bubble.
 The `pressure.dat` holds the pressure history at the measuring point.

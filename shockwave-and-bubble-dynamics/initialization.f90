@@ -6,13 +6,16 @@
     use global,only: gamma_b=>gamma,&
         rho_w=>rho,&
         csound=>c,&
-        miu,sigma,tend,sdt,pressure_loc,pv,g,cd,ca,imigration,ibound,pamb,uamb,tdelay
+        miu,sigma,tend,sdt,pressure_loc,&
+        pv,g,cd,ca,imigration,ibound,pamb,uamb,tdelay,&
+        fpath
     use boundary
     use bubble,only:nbubble
+    use ifport
     implicit none
     real wcharge,hdepth,Rp
     real entro,cs,alpha
-    integer i,j
+    integer i,j,n
     
     print*,''
     print*,' ___________________________________________________'
@@ -37,8 +40,16 @@
     
     pi = asin(1.0)*2.0
     
+    n = iargc() ! how many arguments
+                ! use argument as the working folder
+    if(n==0)then
+        fpath=''
+    else
+        call getarg(1,fpath)
+    endif
+    
     ! read jwl info
-    open(100,file='jwl.in')
+    open(100,file=trim(fpath)//'jwl.in')
     read(100,*) A
     read(100,*) B
     read(100,*) C
@@ -49,14 +60,14 @@
     read(100,*) jwl_E
     close(100)
     ! read water info
-    open(100,file='water.in')
+    open(100,file=trim(fpath)//'water.in')
     read(100,*) gamma
     read(100,*) pw
     read(100,*) rho0
     close(100)
     
     ! read bubble parameters
-    open(100,file='bubble.in')
+    open(100,file=trim(fpath)//'bubble.in')
     read(100,*) miu
     read(100,*) sigma
     read(100,*) Pv
@@ -76,7 +87,7 @@
     endif
     
     ! read case parameters
-    open(100,file='case.in')
+    open(100,file=trim(fpath)//'case.in')
     read(100,*) wcharge
     read(100,*) hdepth
     read(100,*) pressure_loc
