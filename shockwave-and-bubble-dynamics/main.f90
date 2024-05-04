@@ -95,7 +95,7 @@
         endif
         ! update dt
         dt = L/(np+1)**2/(dRs+cs)
-        if(mod(n,50)==0)   write(105,'(3E15.5)') time,Rb,0.0
+        if(mod(n,10)==0)   write(105,'(3E15.5)') time,Rb,0.0
         if(mod(n,1000)==0)then
                 print*,'-------------------------------------------------'
                 print'(A10,3A13)','increment','time','Rs','Rb'
@@ -165,6 +165,7 @@
             pg0=pg
             t_start = time
             iexit = .true.
+            !exit
         endif
         if(time>2*t_start.and.iexit)then
             exit
@@ -172,6 +173,8 @@
         if(mod(n,100)==0)then
             print'(I10,3E13.3)',n,time,Rs,Rb
         endif
+        if(mod(n,10)==0.and..not.iexit)&
+            write(105,'(3E15.5)') time,Rb,0.0
         if(mod(n,2000)==0)then
             print*,'-------------------------------------------------'
             print'(A10,3A13)','increment','time','Rs','Rb'
