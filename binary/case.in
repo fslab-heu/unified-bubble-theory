@@ -3,3 +3,4 @@
 0.7,0,0		! coordinate of pressure point with respect to charge center
 0.03			! solution time
 0.1		! dt scale, default value: 1.0
+1e-7		! time delay for the shock wave front
