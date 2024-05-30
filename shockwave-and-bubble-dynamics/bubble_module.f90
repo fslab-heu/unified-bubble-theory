@@ -32,10 +32,24 @@
     use global
     implicit none
     class(sbubble):: this
-    
+    real,allocatable:: temp(:,:)
     this%p = pressure(this,this%r)
     this%h = enthalpy(this,this%r)
     this%dh = denthalpy(this,this%r,this%dr)
+    if(inc==size(this%bhis(:,1)))then
+        if(inc>20000000)then
+            print*,'Error: Too many steps for bubble dynamics!'
+            print*,'Please reduce total time or increase time step!'
+            stop
+        endif
+        allocate(temp(inc,10))
+        temp = this%bhis(:,1:10)
+        deallocate(this%bhis)
+        allocate(this%bhis(2*inc,10))
+        this%bhis(1:inc,1:10) = temp
+        deallocate(temp)
+    endif
+    
     
     this%bhis(inc+1,1:10) = [t+dt,&
     this%r,this%dr,this%ddr,&
