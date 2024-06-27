@@ -258,18 +258,20 @@
     call initiation(R0,dRb0,pg0)
     inc = 0
     t = 0
-    t_shock = time - t_arrive
+    t_shock = time-t_arrive+tdelay  ! end time of shock wave
     print*,'-------------------------------------------------'
     print'(A10,3A13)','increment','time','Rb','Zb'
     print*,'-------------------------------------------------'
-    do while(t + t_start - t_arrive<tend)
+    do while(t + t_start <tend)
         call collect_dt()
         call bubbles(1)%advance
-        if(mod(inc,20)==0 .and. t + t_start - t_arrive > t_offset .and.&
-            t > Rp/csound)then
-            state = collect_induced_field(pressure_loc,t)
-            write(104,'(2E15.6)') t + t_start - t_arrive + tdelay, &
-                state(1) 
+        time = t + (Rp-bubbles(1)%R)/c0
+        if(mod(inc,20)==0 .and. time+t_start - t_arrive > t_shock)then
+            !state = collect_induced_field(pressure_loc,time)
+            pout = rho0*(2*bubbles(1)%R*bubbles(1)%dR**2+&
+                bubbles(1)%R**2*bubbles(1)%ddR)/(rp-bubbles(1)%R)
+            write(104,'(2E15.6)') time + t_start - t_arrive + tdelay, &
+                pout
         endif
         if(mod(inc,1000)==0)then
             print'(I10,3E13.3)',inc,t,bubbles(1)%R,bubbles(1)%center(3)
