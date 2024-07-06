@@ -181,7 +181,6 @@
             print*,'-------------------------------------------------'
         endif
     enddo
-    
 
     print*,'-------------------------------------------------'
     print*,'-------------------------------------------------'
@@ -267,9 +266,8 @@
         call bubbles(1)%advance
         time = t + (Rp-bubbles(1)%R)/c0
         if(mod(inc,20)==0 .and. time+t_start - t_arrive > t_shock)then
-            !state = collect_induced_field(pressure_loc,time)
-            pout = rho0*(2*bubbles(1)%R*bubbles(1)%dR**2+&
-                bubbles(1)%R**2*bubbles(1)%ddR)/(rp-bubbles(1)%R)
+            pout = rho0*(bubbles(1)%R/(rp)*&
+                (bubbles(1)%H+0.5*bubbles(1)%dR**2.0))
             write(104,'(2E15.6)') time + t_start - t_arrive + tdelay, &
                 pout
         endif
