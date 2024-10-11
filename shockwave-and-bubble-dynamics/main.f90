@@ -200,13 +200,18 @@
     ! solve the transportation equation of shock wave energy
     iexit = .false.
     do while(Re<Rp)
-        if(Rs<Rp)then
+        if(Rs<Rp)then   ! time increment before arriving at p
             dt = min(Rs / 100.0 / c0,&
                 (Rp+0.01*Lp-Rs)/c0)
-        else
+            if(Rs+dt*dRs>Rp)then    ! the exact time of arriving
+                dt = (Rp-Rs+0.005*Lp)/dRs
+            endif
+        else            ! time increment after arriving at p
             dt = Lp / 100.0 / c0
         endif
         
+        ! if the solution region passed the measuring point
+        ! simulation exit
         if(Re+dt*c0>Rp) then
             dt = (Rp-Re)/c0
             iexit = .true.
