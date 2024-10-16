@@ -91,7 +91,7 @@
     
     ! calculate rm with the initial conditions
     this%rm = 2*pi*this%r0**3*rho*this%dr**2 &   ! kinetic energy
-        + 4.0/3.0*this%p0/(gamma-1)*this%r0**3 & ! internal energy
+        + 4.0/3.0*pi*this%p0/(gamma-1)*this%r0**3 & ! internal energy
         + 4.0/3.0*pi*this%r0**3.0*this%pamb
     this%rm = (0.75*this%rm / this%pamb /pi)**0.33333
     

@@ -15,7 +15,7 @@
     implicit none
     real wcharge,hdepth,Rp
     real entro,cs,alpha
-    integer i,j,n
+    integer i,j,n,ierr
     
     print*,''
     print*,' ___________________________________________________'
@@ -48,8 +48,12 @@
         call getarg(1,fpath)
     endif
     
+    ! check for output directory
+    call Createfolder(trim(fpath)//'output',.true.,ierr)
+    
+    
     ! read jwl info
-    open(100,file=trim(fpath)//'jwl.in')
+    open(100,file=trim(fpath)//'jwl.in',status='old')
     read(100,*) A
     read(100,*) B
     read(100,*) C
@@ -60,14 +64,14 @@
     read(100,*) jwl_E
     close(100)
     ! read water info
-    open(100,file=trim(fpath)//'water.in')
+    open(100,file=trim(fpath)//'water.in',status='old')
     read(100,*) gamma
     read(100,*) pw
     read(100,*) rho0
     close(100)
     
     ! read bubble parameters
-    open(100,file=trim(fpath)//'bubble.in')
+    open(100,file=trim(fpath)//'bubble.in',status='old')
     read(100,*) miu
     read(100,*) sigma
     read(100,*) Pv
@@ -87,7 +91,7 @@
     endif
     
     ! read case parameters
-    open(100,file=trim(fpath)//'case.in')
+    open(100,file=trim(fpath)//'case.in',status='old')
     read(100,*) wcharge
     read(100,*) hdepth
     read(100,*) pressure_loc
@@ -174,3 +178,49 @@
     ! update dt
     dt = L/np/5.0/(dRb+cs)
     end subroutine
+    
+    subroutine Createfolder(path,iwin,ierr)
+    use ifport
+    implicit none
+    integer,intent(out):: ierr
+    logical,intent(in):: iwin
+    character*(*),intent(in):: path
+    character*(500) cmd
+    integer sta
+    logical exist
+    ierr=0
+    inquire(directory=trim(adjustl(path)),exist=exist)
+    if(exist)then
+        print*,'Directory ',trim(path),' exists!'
+        return
+    endif
+    if(iwin)then
+        cmd = 'md '//trim(adjustl(path))
+        call replace_char(cmd,'/','\')
+    else
+        cmd = 'mkdir '//trim(adjustl(path))
+    endif
+    sta=system(cmd)
+    if(sta==0)then
+        print*,'Creating directory ',trim(path),' successed!'
+    else
+        print*,'Error in creating the following directory:'
+        print*,trim(path)
+    endif
+    return
+    end subroutine
+    
+   subroutine replace_char(line,ch1,ch2)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!! replace ch1 with ch2
+      implicit none
+      character(len=*) line
+      character ch1,ch2
+      integer N,i,j
+      N=len_trim(line)
+      do i=1,N
+         if(line(i:i)==ch1)then
+            line(i:i)=ch2
+         endif
+      enddo
+   end subroutine replace_char
