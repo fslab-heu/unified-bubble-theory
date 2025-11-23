@@ -1,0 +1,11 @@
+7.8     ! charge weight (kg)
+10     ! initial depth (m)
+0.6     ! tend (s), from the shock wave arrive the sensor
+10       ! sensor distance in r (m)
+0       ! sensor distance in z (m)
+9.8     ! gravity (m/s^2)
+1.03e5  ! Atmosphere pressure (Pa)
+-1      ! free surface reflection coefficient (1: rigid, -1: free), for bubble simulation
+0.5     ! Ca for bubble simulation
+0.5     ! Cd for bubble simulation
+0.1     ! global safety dt factor
