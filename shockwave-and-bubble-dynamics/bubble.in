@@ -1,7 +1,0 @@
-1e-3           ! dynamic viscosity
-0.075           ! surface tension
-2338           ! cavitation limit
-9.8           ! gravity
-2.0           ! drag coefficient
-0.5           ! added-mass coefficient
--1.0           ! reflection coefficient of free surface

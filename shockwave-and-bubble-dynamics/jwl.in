@@ -1,8 +1,0 @@
-371.2e9           ! A
-3.231e9           ! B
-0           ! C, if input 0, then calculate with E0
-4.15           ! R1
-0.95           ! R2
-0.3           ! w
-1630           ! rho0
-7e9           ! E0*rho0, specific energy per unit volume
