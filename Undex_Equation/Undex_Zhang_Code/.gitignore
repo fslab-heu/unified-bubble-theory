@@ -1,0 +1,23 @@
+# Ignore build files
+*.exe
+*.o
+*.mod
+*.smod
+*.a
+.vs
+x64
+*.dat
+*u2d
+main
+
+x64
+x86
+
+lib
+
+# Ignore output files
+# output
+
+# vscode
+.vscode
+
