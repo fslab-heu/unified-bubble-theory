@@ -1,0 +1,677 @@
+        ! module to hold the boundary information
+    ! in this code, it refers to the freesurface
+    module boundary
+    private :: length
+    type bound
+        real norm(3)
+        real b
+        real alpha
+    contains
+    procedure:: ini_bound
+    end type
+    
+    type(bound):: bound1
+    contains
+    subroutine ini_bound(this,norm,pos,alpha)
+    implicit none
+    class(bound):: this
+    real norm(3),pos(3),alpha
+    this%alpha = alpha
+    this%norm = norm/length(norm)
+    this%b = -dot_product(this%norm,pos)
+    return
+    end subroutine
+    real function length(vect)
+        real vect(:)
+        integer N
+        N=size(vect)
+        length=sqrt(sum(vect**2))
+        return
+    end function
+    
+    end module
+! module to hold the variables and functions of bubble
+    module bubble
+        integer inc
+        real :: Ca, Cd, Sdt = 0.5
+        private:: length
+        integer, parameter::  nbubble = 1
+        type sbubble
+            ! static variables
+            integer id,fid
+            real :: gamma
+            ! current variables
+            real r,dr,ddr,dddr,p,vel(3),center(3),h,dh
+            ! ambient fluid conditions
+            real pamb,dpamb,grad_pamb(3),uamb(3),duamb(3)
+            ! initial conditions
+            real r0,p0,rm,tref,center0(3)
+            logical,allocatable:: impacted(:,:)
+            ! history for interpolation
+            ! 1-time 2-R 3-dR 4-ddR 5-P 6-H 7-dH
+            real,allocatable:: bhis(:,:)
+        contains
+        procedure ini_bubble
+        procedure collect_ambient
+        procedure advance
+        procedure print_bubble  
+        procedure update
+        end type
+        type(sbubble):: bubbles(10)
+    contains
+    
+    subroutine update(this)
+    ! update variables at a new time increment
+    use model
+    implicit none
+    class(sbubble):: this
+    real,allocatable:: temp(:,:)
+    this%p = pressure(this,this%r)
+    this%h = enthalpy(this,this%r)
+    this%dh = denthalpy(this,this%r,this%dr)
+    if(inc==size(this%bhis(:,1)))then
+        if(inc>20000000)then
+            print*,'Error: Too many steps for bubble dynamics!'
+            print*,'Please reduce total time or increase time step!'
+            stop
+        endif
+        allocate(temp(inc,10))
+        temp = this%bhis(:,1:10)
+        deallocate(this%bhis)
+        allocate(this%bhis(2*inc,10))
+        this%bhis(1:inc,1:10) = temp
+        deallocate(temp)
+    endif
+    
+    
+    this%bhis(inc+1,1:10) = [t+dt,&
+        this%r,this%dr,this%ddr,&
+        this%p,this%h,this%dh,&
+        this%vel(1),this%vel(2),this%vel(3)]
+    
+    end subroutine
+    
+    subroutine ini_bubble(this,r,dr,id)
+    ! initialize a bubble
+    use model
+    implicit none
+    class(sbubble):: this
+
+    real pos(3),r,dr
+    integer id
+    real sol1(4),dat1(7)
+    character*100 name
+    this%r0=r
+    this%p=pg
+    this%center=0
+    this%center0=0
+    this%r=r
+    this%dr=dr
+    this%p0=pg
+    this%vel=0
+    this%pamb=p0
+    this%dpamb=0
+    this%uamb=0
+    this%id=id
+    this%fid=id+100
+    this%gamma = explosive%w + 1.0
+    allocate(this%bhis(1000000,10))
+    this%bhis=0
+    
+    allocate(this%impacted(nbubble,2))
+    this%impacted = .false.
+    
+    
+    
+    ! calculate rm with the initial conditions
+    ! estimate the maximum bubble radius
+    this%rm = 2*pi*this%r0**3*rho0*this%dr**2 &   ! kinetic energy
+        + 4.0/3.0*pi*pg/explosive%w*this%r0**3 & ! internal energy
+        + 4.0/3.0*pi*this%r0**3.0*this%pamb
+    this%rm = (0.75*this%rm / this%pamb /pi)**0.33333
+    
+    this%tref = this%rm*sqrt(rho0/this%pamb)
+
+    
+    call this%update()
+    
+    call this%collect_ambient(1)
+    dat1 = [this%r,this%dr,&
+        enthalpy(this,this%r),denthalpy(this,this%r,this%dr),&
+        this%vel(1),this%vel(2),this%vel(3)]
+    
+    sol1 = solve(this,dat1)
+    this%ddr = sol1(1)
+    
+    this%bhis(1,4) = this%ddr
+    
+    return
+    end subroutine
+    
+    subroutine collect_ambient(this,stg)
+    ! calculate the ambient variables of the bubble center
+    use model
+    use math, only: length, interp1
+    use boundary
+    implicit none
+    class(sbubble):: this
+    
+    integer i,stg
+    real pos(3)
+    real vel(3),dphi,ddphi
+    real time
+    real grad_dphi(3), duamb(3)
+    real fs, tinp
+    pos = this%center
+    this%pamb = p0 - rho0*gaccel*this%center(3)
+    this%uamb = 0.0
+    this%dpamb = 0
+    this%grad_pamb = [0.0,0.0,-rho0*gaccel]
+    this%duamb = 0
+    tinp = t + (this%R)/c0
+    if(allocated(shock2bubble).and.n_s2b>0)then
+        if(tinp<shock2bubble(1,1).or.tinp>shock2bubble(1,n_s2b))then
+            fs = 0.0
+        else
+            fs = interp1(shock2bubble(1,1:n_s2b), &
+            shock2bubble(2,1:n_s2b), tinp, 'linear')
+        endif
+        this%pamb = this%pamb + fs/this%R/2.0
+    endif
+
+
+
+
+    ! influence from the shock wave
+
+
+    
+    ! do i=1,nbubble
+    !     call induced_flow(bubbles(i),pos,&
+    !         vel,duamb,dphi,ddphi,grad_dphi,stg,this%impacted(i,:))
+    !     this%uamb = this%uamb+vel
+    !     this%pamb = this%pamb - rho0*dphi
+    !     this%dpamb = this%dpamb - rho0*ddphi
+    !     this%grad_pamb = this%grad_pamb - rho0 *grad_dphi
+    !     this%duamb = this%duamb + duamb
+    ! enddo
+
+    ! if(ibound)then
+    !     do i=1,nbubble
+    !         if(bubbles(i)%started)then
+    !         call induced_flow_bound(bubbles(i),pos,&
+    !             vel,duamb,dphi,ddphi,grad_dphi,stg)
+    !         this%uamb = this%uamb+vel
+    !         this%pamb = this%pamb - rho0*dphi
+    !         this%dpamb = this%dpamb - rho0*ddphi
+    !         this%grad_pamb = this%grad_pamb - rho0 *grad_dphi
+    !         this%duamb = this%duamb + duamb
+    !         endif
+    !     enddo
+    ! endif
+
+    this%pamb = this%pamb - 0.5*rho0*(length(this%uamb))**2.0
+    this%dpamb = this%dpamb - rho0*dot_product(this%uamb,this%duamb)
+
+    end subroutine
+    
+    
+    function collect_induced_field(pos,time) result(output)
+    ! calculate the pressure at a given position
+    use model
+    use boundary
+    use math, only: length
+    implicit none
+    integer i
+    real pos(3)
+    real vel(3),dphi,ddphi
+    real time
+    real grad_dphi(3), duamb(3)
+    real output(11)
+    
+    output(1) = 0! pamb - rho0*g*pos(3) ! pressure
+    output(2) = 0                   ! dp
+    output(3:5) = 0.0              ! uamb
+    output(6:8) = [0.0,0.0,-rho0*gaccel]  ! nabla p
+    output(9:11) = 0                ! duamb
+    
+    do i=1,nbubble
+        call induced_flow(bubbles(i),pos,vel,duamb,dphi,ddphi,grad_dphi,1)
+        output(3:5) = output(3:5)+vel
+        output(1) = output(1) - rho0*dphi
+        output(2) = output(2) - rho0*ddphi
+        output(6:8) = output(6:8) - rho0 *grad_dphi
+        output(9:11) = output(9:11) + duamb
+    enddo
+
+    ! if(ibound)then
+    !     do i=1,nbubble
+    !         if(bubbles(i)%started)then
+    !         call induced_flow_bound(bubbles(i),pos,vel,duamb,dphi,ddphi,grad_dphi,1)
+    !         output(3:5) = output(3:5)+vel
+    !         output(1) = output(1) - rho0*dphi
+    !         output(2) = output(2) - rho0*ddphi
+    !         output(6:8) = output(6:8) - rho0 *grad_dphi
+    !         output(9:11) = output(9:11) + duamb
+    !         endif
+    !     enddo
+    ! endif
+
+    output(1) = output(1) - 0.5*rho0*(length(output(3:5)))**2.0
+    output(2) = output(2) - rho0*dot_product(output(3:5),output(9:11))
+
+    end function
+    
+    
+    
+    
+    subroutine induced_flow(this,pos,vel,dvel,&
+        dphi,ddphi,grad_dphi,stg,impacted)
+    use model
+    use math, only: length
+    implicit none
+    class(sbubble):: this
+    real vel(3),dphi,pos(3),ddphi
+    real center(3),sub(3),dis
+    real tint,time
+    integer i,m,n,stg
+    real wm,wn,tinc
+    real r, dr, h, ddr,dh
+    real dvel(3),grad_dphi(3),dir(3),vmig,dvmig
+    logical,optional:: impacted(:)
+    
+    if(stg==1)then
+        time=t
+    elseif(stg==2)then
+        time=t+0.5*dt
+    elseif(stg==3)then
+        time=t+dt
+    endif
+    
+    vel = 0
+    dphi = 0
+    ddphi = 0
+    dvel = 0
+    grad_dphi =0
+    
+    center=this%center
+    sub = center-pos
+    dis = length(sub)
+    dir = -sub/dis
+    tint = time - (dis-this%r)/c0
+
+    do i=1,inc
+        if(tint<=this%bhis(i,1))exit
+    enddo
+    if(i>inc)then
+        print*,'Error in interpolation!'
+        print*,'Check for the distance between the bubbles!'
+        stop
+    endif
+    m=i-1;n=i;
+    tinc=this%bhis(n,1)-this%bhis(m,1)
+    wn = (tint-this%bhis(m,1))/tinc
+    wm = 1-wn
+
+    
+    r = wm*this%bhis(m,2)+wn*this%bhis(n,2)
+    dr = wm*this%bhis(m,3)+wn*this%bhis(n,3)
+    ddr = wm*this%bhis(m,4)+wn*this%bhis(n,4)
+    vmig = wm*length(this%bhis(m,8:10))+wn*length(this%bhis(n,8:10))
+    dvmig = (length(this%bhis(n,8:10)) - length(this%bhis(m,8:10)))/&
+        (this%bhis(n,1)-this%bhis(m,1))
+    ! h and dh must be intepolated from existing data
+    ! since the ambient pressure are not stored for history
+    h = wm*this%bhis(m,6)+wn*this%bhis(n,6)
+    dh = wm*this%bhis(m,7)+wn*this%bhis(n,7)
+
+    vel = dir*r/dis**2*(r*dr+(dis-r)/c0*(h+0.5*dr**2))
+    dphi = -r/dis*(h+0.5*dr**2.0+0.25*vmig**2)
+    ddphi = -(dr*(h+0.5*dr**2.0) + r*(dh+dr*ddr+0.5*vmig*dvmig))/dis
+    ! calculate grad_dphi
+    grad_dphi = -dphi*dir/dis - &
+        dir*ddphi/c0
+    ! calculate dvel
+    dvel = - sub / dis**3.0*(&
+        this%bhis(n,2)/c0*(dis-this%bhis(n,2))*(         &
+        this%bhis(n,6)+0.5*this%bhis(n,3)**2.0)+        &
+        this%bhis(n,2)**2.0*this%bhis(n,3)) +           &
+        sub / dis**3.0*(this%bhis(m,2)/c0*(dis-          &
+        this%bhis(m,2))*(this%bhis(m,6)+0.5*            &
+        this%bhis(m,3)**2.0)+this%bhis(m,2)**2.0*       &
+        this%bhis(m,3))
+    dvel =dvel/tinc
+    !
+    ! correction for the initial shock
+    
+    if(present(impacted))then
+        if(.not.all(impacted).and.(wm+wn)>0.5)then
+            if((stg==1.and.(.not.impacted(1))).or.      &
+                (stg==2.and.impacted(1)))then
+                dh = dh + h/dt
+                ddphi = ddphi + dphi/dt
+                grad_dphi = grad_dphi - dir*dphi/(dt*c0)
+                dvel = dvel + vel/dt
+                if(stg==1)impacted(1)=.true.
+                if(stg==2)impacted(2)=.true.
+            endif
+        endif
+    endif
+    end subroutine
+    
+    subroutine induced_flow_bound(this,pos,vel,dvel,    &
+        dphi,ddphi,grad_dphi,stg,impacted)
+    use model
+    use math, only: length
+    use boundary
+    implicit none
+    class(sbubble):: this
+    real vel(3),dphi,pos(3),ddphi
+    real center(3),sub(3),dis
+    real tint,time
+    integer i,m,n,stg
+    real wm,wn,tinc
+    real r, dr, h, ddr,dh
+    real dvel(3),grad_dphi(3),dir(3)
+    logical,optional:: impacted(2)
+    if(stg==1)then
+        time=t
+    elseif(stg==2)then
+        time=t+0.5*dt
+    elseif(stg==3)then
+        time=t+dt
+    endif
+    
+    vel = 0
+    dphi = 0
+    ddphi = 0
+    dvel = 0
+    grad_dphi =0
+    
+    
+    center=this%center
+    center = center-(2*dot_product(bound1%norm,         &
+        center+bound1%b))*bound1%norm
+    sub = center-pos
+    dis = length(sub)
+    dir = - sub / dis
+    tint = time - (dis-this%r)/c0
+
+    do i=1,inc
+        if(tint<this%bhis(i,1))exit
+    enddo
+    if(i>inc)then
+        print*,'Error in interpolation for image bubble!'
+        stop
+    endif
+    
+    m=i-1;n=i;
+    tinc=this%bhis(n,1)-this%bhis(m,1)
+    wn = (tint-this%bhis(m,1))/tinc
+    wm = 1-wn
+    
+    r = wm*this%bhis(m,2)+wn*this%bhis(n,2)
+    dr = wm*this%bhis(m,3)+wn*this%bhis(n,3)
+    ddr = wm*this%bhis(m,4)+wn*this%bhis(n,4)
+    
+    ! h = enthalpy(this,r,3)
+    ! dh = denthalpy(this,r,dr,3)
+    ! h and dh must be intepolated from existing data
+    ! since the ambient pressure are not stored for history
+    h = wm*this%bhis(m,6)+wn*this%bhis(n,6)
+    dh = wm*this%bhis(m,7)+wn*this%bhis(n,7)
+    
+
+    vel = dir*r/dis**2*(r*dr+(dis-r)/c0*(h+0.5*dr**2))
+    dphi = -r/dis*(h+0.5*dr**2.0)
+    ddphi = -(dr*(h+0.5*dr**2.0) + r*(dh+dr*ddr))/dis
+    ! calculate grad_dphi
+    grad_dphi = -dphi*dir/dis - &
+        dir*ddphi/c0
+    ! calculate dvel
+    dvel = - sub / dis**3.0*(&
+        this%bhis(n,2)/c0*(dis-this%bhis(n,2))*(         &
+        this%bhis(n,6)+0.5*this%bhis(n,3)**2.0)+        &
+        this%bhis(n,2)**2.0*this%bhis(n,3)) +           &
+        sub / dis**3.0*(this%bhis(m,2)/c0*(dis-          &
+        this%bhis(m,2))*(this%bhis(m,6)+0.5*            &
+        this%bhis(m,3)**2.0)+this%bhis(m,2)**2.0        &
+        *this%bhis(m,3))
+    dvel =dvel/tinc
+    ! correction for the initial shock
+    
+    if(present(impacted))then
+        if(.not.all(impacted).and.(wm+wn)>0.5)then
+            if((stg==1.and.(.not.impacted(1))).or.&
+                (stg==2.and.impacted(1)))then
+                dh = dh + h/dt
+                ddphi = ddphi + dphi/dt
+                grad_dphi = grad_dphi - dir*dphi/(dt*c0)
+                dvel = dvel + vel/dt
+                if(stg==1)impacted(1)=.true.
+                if(stg==2)impacted(2)=.true.
+            endif
+        endif
+    endif
+    vel=vel*bound1%alpha
+    dvel=dvel*bound1%alpha
+    dphi=dphi*bound1%alpha
+    ddphi=ddphi*bound1%alpha
+    grad_dphi=grad_dphi*bound1%alpha
+    end subroutine
+    
+    ! real function length(vect)
+    !     real vect(:)
+    !     integer N
+    !     N=size(vect)
+    !     length=sqrt(sum(vect**2))
+    !     return
+    ! end function
+    
+    
+    
+    subroutine advance(this)
+    use model
+    implicit none
+    class(sbubble):: this
+    real dat1(7),dat2(7),dat3(7),dat4(7)
+    real sol1(4),sol2(4),sol3(4),sol4(4)
+    
+        call this%collect_ambient(1)
+        dat1 = [this%r,this%dr,enthalpy(this,this%r),       &
+            denthalpy(this,this%r,this%dr),&
+            this%vel(1),this%vel(2),this%vel(3)]
+    
+        sol1 = solve(this,dat1)
+    
+        call this%collect_ambient(2)
+        dat2(1:2) = dat1(1:2)+0.5*dt*[dat1(2),sol1(1)]
+        dat2(3:4) = [enthalpy(this,dat2(1)),                &
+            denthalpy(this,dat2(1),dat2(2))]
+    
+        dat2(5:7) = this%vel+0.5*dt*sol1(2:4)
+
+        sol2 = solve(this,dat2)
+        this%r = this%r+dt*dat2(2)
+        this%dr = this%dr+dt*sol2(1)
+        this%ddr = sol1(1)+2*(sol2(1)-sol1(1))
+
+        this%center = this%center+dt*dat2(5:7)
+        this%vel = this%vel+ dt*sol2(2:4)
+    call this%collect_ambient(3)
+    
+    call this%update()
+    end subroutine
+    
+    function rk(this,input,slop,step)
+    class(sbubble):: this
+    real rk(4)
+    real input(4),slop(2)
+    integer step
+    rk = 0
+    end function
+    
+    
+    subroutine print_bubble(this)
+    use model
+    class(sbubble):: this
+    write(this%fid,"(10E15.7)") t,this%r,&
+        this%p,this%R*rho0*(this%h+this%dr**2),&
+        this%center-this%center0, this%vel
+    end subroutine
+    
+    real function enthalpy(this,r)
+    use model
+    class(sbubble):: this
+    real r
+    real pb,pa
+    real e
+    pb = pressure(this,r) 
+    pa = this%pamb
+    e = (pb-pa)/rho0/c0**2
+    enthalpy = e-0.5*e**2
+    enthalpy = enthalpy*c0**2
+    
+    end function
+    
+    real function pressure(this,r)
+    use model
+    implicit none
+    class(sbubble):: this
+    real r
+    pressure = this%p0 *(this%r0/r)**(3*this%gamma)!-     &
+        ! 2*sigma/this%R -                            &    ! surface tension
+        ! 4*miu*this%dR/this%R                        &    ! viscosity
+        ! + Pv                                             ! Pv
+    end function
+    
+    real function dpressure(this,r,dr)
+    use model
+    implicit none
+    class(sbubble):: this
+    real r,dr
+    dpressure = -3*this%gamma*pressure(this,r)/r*dr!+     &
+        ! 2*sigma/this%R**2*this%dR +                 &   ! surface tension
+        ! 4*miu*this%dR**2/this%R**2                      ! viscosity
+    end function
+    
+    
+    real function denthalpy(this,r,dr)
+    use model
+    implicit none
+    class(sbubble):: this
+    real r,dr
+    real dpa,dpb,e,de,pa,pb
+    
+    pb = pressure(this,r)
+    pa = this%pamb
+    e= (pb-pa)/rho0/c0**2
+    dpa = this%dpamb
+    dpb = dpressure(this,r,dr)
+    de = (dpb-dpa)/rho0/c0**2
+    denthalpy = de- e*de+ e**2*de;
+    denthalpy = denthalpy*c0**2
+    
+    end function
+    
+    
+    function solve(this,input)
+    use model
+    use math, only: length
+    implicit none
+    class(sbubble):: this
+    real,dimension(4):: solve
+    real input(7)
+    real r,dr,p,h
+    real A,u2,uref(3)
+    real du2, dh,du(3),u(3)
+    real ss(3)
+    real Pa,dPa, NPa(3)
+    r=input(1)
+    dr=input(2)
+    h=input(3)
+    dh = input(4)
+    u = input(5:7)
+    uref = u-this%uamb
+    u2 = dot_product(uref,uref)
+    
+    Pa = this%pamb
+    dPa = this%dpamb
+    NPa = this%grad_pamb
+    
+    ! solution for vel
+    ss = u-this%uamb
+    ss = ss*length(ss)
+    solve = 0
+
+    solve(2:4) = - ( 24.0*1e9*Ca*dR*rho0*uref +      &
+        8.0*1e9*R*0*rho0*uref                        &
+            + 3.0*1e9*Cd*rho0*ss                     &
+           -12.0*dR**2.0*rho0*uref                   &
+            + 8.0*1e9*NPA*R                         &
+             )/4.0/R/rho0/(2*Ca*1e9-dR)
+
+    
+    solve(1) = ((-6.0 * dR ** 2 * c0 + c0 * u2 + 2.0    &
+     * dot_product(uref,solve(2:4)) * R + 2.0 * dR ** 3   &
+      + dR * u2 + 4.0 * c0 * H + 4.0 * dH * R +        &
+      4.0 * H * dR) / R / (c0 - dR)) / 4.0
+    solve(2:4) = solve(2:4) + this%duamb 
+    
+    
+    return
+    
+    end function
+    
+    subroutine collect_dt()
+    use model
+    use math, only: length
+    implicit none
+    integer i,j
+    real dis
+    dt = 1e10
+    do i=1,nbubble
+        dt = min(dt,&
+            0.01*bubbles(i)%tref*(bubbles(i)%r/bubbles(i)%rm)**2.0)
+        do j=1,i-1
+            dis=length(bubbles(i)%center-bubbles(j)%center)
+            dt = min(dt,dis/c0*0.3)
+        enddo
+        
+    enddo
+    dt = sdt*dt
+    end subroutine
+    
+    function pressure_at_position(pos)
+    use model
+    use boundary
+    implicit none
+    real pos(3)
+    real pressure_at_position
+    integer i
+    real dphi,vel(3),ddphi,dphi1,vel1(3)
+    real grad_phi(3),dvel(3)
+    dphi=0;
+    vel=0.0
+    
+    do i=1,nbubble
+        call induced_flow(bubbles(i),pos,vel1,dvel,     &
+            dphi1,ddphi,grad_phi,1)
+        vel=vel+vel1
+        dphi=dphi+dphi1
+    enddo
+    ! if(ibound)then
+    !     do i=1,nbubble
+    !         call induced_flow_bound(bubbles(i),pos,     &
+    !             vel1,dvel,dphi1,ddphi,grad_phi,1)
+    !         vel=vel+vel1
+    !         dphi=dphi+dphi1
+    !     enddo
+    ! endif
+    pressure_at_position = -rho0*(dphi +                 &
+        0.5*dot_product(vel,vel))
+    end function
+    
+    
+    end module
+
