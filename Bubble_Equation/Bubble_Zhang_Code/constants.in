@@ -1,0 +1,11 @@
+1.25							! gamma
+1500						! sound speed
+1e-3						! dynamic viscosity
+0.075						! surface tension
+2338            ! Satured vapor pressure
+9.8							! gravity 
+1000						! density of surrounding fluid
+1.5						    ! drag coefficient
+0.5							! added-mass coefficient
+1.0e5						! ambient pressure at z = 0
+0,0,0						! current velocity
